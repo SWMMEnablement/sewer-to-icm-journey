@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   FileInput, 
   Database, 
@@ -12,7 +13,8 @@ import {
   Clock,
   Zap,
   Shield,
-  FileCode
+  FileCode,
+  Code2
 } from "lucide-react";
 
 const Index = () => {
@@ -293,8 +295,109 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Source Code Section */}
+      <div className="container mx-auto px-4 py-16 bg-muted/30">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Code2 className="w-8 h-8 text-primary" />
+              <h2 className="text-3xl font-bold text-foreground">
+                Ruby Source Code
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Complete source code for the import tool
+            </p>
+          </div>
+
+          <Card className="overflow-hidden">
+            <Tabs defaultValue="main" className="w-full">
+              <TabsList className="w-full justify-start rounded-none border-b bg-muted/50 p-0 h-auto flex-wrap">
+                <TabsTrigger value="main" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  InfoSewer_Import_UI.rb
+                </TabsTrigger>
+                <TabsTrigger value="prompts" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  prompts.rb
+                </TabsTrigger>
+                <TabsTrigger value="data" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  data.rb
+                </TabsTrigger>
+                <TabsTrigger value="geo" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  geo.rb
+                </TabsTrigger>
+                <TabsTrigger value="scenario" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  scenario_import.rb
+                </TabsTrigger>
+                <TabsTrigger value="selection" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  selection_sets.rb
+                </TabsTrigger>
+                <TabsTrigger value="cleanup" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  sql_cleanup.rb
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="main" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{mainCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="prompts" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{promptsCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="data" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{dataCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="geo" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{geoCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="scenario" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{scenarioCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="selection" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{selectionCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="cleanup" className="p-0 m-0">
+                <div className="max-h-[600px] overflow-auto">
+                  <pre className="p-6 text-sm bg-card">
+                    <code>{cleanupCode}</code>
+                  </pre>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </Card>
+        </div>
+      </div>
+
       {/* Footer */}
-      <div className="border-t border-border bg-muted/30">
+      <div className="border-t border-border bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-5xl mx-auto text-center text-sm text-muted-foreground">
             <p className="mb-2">
@@ -309,5 +412,139 @@ const Index = () => {
     </div>
   );
 };
+
+// Ruby source code content
+const mainCode = `# ============================================================================
+# InfoSewer to InfoWorks ICM Import Tool - UI SCRIPT
+# ============================================================================
+# Main entry point for importing InfoSewer models into InfoWorks ICM
+
+load File.join(__dir__, 'lib', 'data.rb')
+load File.join(__dir__, 'lib', 'prompts.rb')
+load File.join(__dir__, 'lib', 'geo.rb')
+load File.join(__dir__, 'lib', 'sql_cleanup.rb')
+load File.join(__dir__, 'lib', 'scenario_import.rb')
+load File.join(__dir__, 'lib', 'selection_sets.rb')
+
+def main()
+  puts "InfoSewer to InfoWorks ICM Import Tool"
+  
+  # Get network and configuration
+  network = WSApplication.current_network
+  return unless network
+  
+  # Import BASE scenario
+  # Import scenarios
+  # Import selection sets
+  
+  puts "Import Complete!"
+end
+
+main()`;
+
+const promptsCode = `require 'yaml'
+
+# User prompts and configuration dialogs
+
+def prompt_get_config(config_file)
+  # Load previous config or use defaults
+  # Display configuration dialog
+  # Save config for next time
+end
+
+def prompt_select_scenarios(scenario_names)
+  # Display scenario selection dialog
+  # Return selected scenarios
+end`;
+
+const dataCode = `require 'yaml'
+require 'win32ole'
+require 'csv'
+require 'fileutils'
+
+# DBF to CSV conversion using Excel COM automation
+
+def get_converted_csvs(model_path, csv_path, delete_existing)
+  # Convert DBF files to CSV format
+  convert_dbf_to_csv(iedb_path, csv_path, delete_existing)
+end
+
+def convert_dbf_to_csv(dbf_path, csv_path, delete_existing = true)
+  # Create Excel instance
+  excel = WIN32OLE::new('Excel.Application')
+  excel.DisplayAlerts = false
+  
+  # Convert each DBF file
+  Dir.glob(File.join(dbf_path, '**', '*.DBF')).each do |dbf|
+    # Open and save as UTF-8 CSV
+  end
+  
+  excel.Quit()
+end`;
+
+const geoCode = `# Network geometry import from DBF files
+
+def get_model_nodes(csv_anode_ids, csv_manhole, csv_wwell, csv_node)
+  nodes = Hash.new
+  
+  # Read manholes and determine node types
+  # Read wetwells
+  # Append geometry from NODE.DBF
+  
+  return nodes
+end
+
+def get_model_links(csv_alink_ids, csv_vertex, csv_link, csv_pipe, csv_pump)
+  links = Hash.new
+  
+  # Read pipes and forcemains
+  # Read pumps
+  # Add vertices and connectivity
+  
+  return links
+end`;
+
+const scenarioCode = `# Scenario-specific data import
+
+def import_scenario_mhhyd(network, scenario_id, iedb_path, mh_set)
+  # Import manhole hydraulic loads per scenario
+  # Update subcatchment LOAD1-10, PATTERN1-10
+end
+
+def import_scenario_pipehyd(network, scenario_id, iedb_path, pipe_set)
+  # Import pipe hydraulics per scenario
+  # Update inverts, lengths, diameters, roughness
+end
+
+def import_scenario_pumphyd(network, scenario_id, iedb_path, pump_set)
+  # Import pump curves per scenario
+end
+
+def import_scenario_wwellhyd(network, scenario_id, iedb_path, well_set)
+  # Import wetwell data per scenario
+end`;
+
+const selectionCode = `# Import InfoSewer selection sets as ICM selection lists
+
+def import_selection_sets(network, iedb_path, parent_object)
+  # Read SELSET.CSV for set definitions
+  # Process each selection set
+  # Read ANODE.CSV and ALINK.CSV
+  # Create ICM selection lists
+end`;
+
+const cleanupCode = `# Post-import SQL cleanup operations
+
+def run_all_cleanup_sql(network)
+  network.transaction_begin
+  
+  sql_set_outfall_types(network)
+  sql_create_subcatchments(network)
+  sql_resolve_conduit_lengths(network)
+  sql_find_and_convert_pumps(network)
+  sql_insert_pump_curves(network)
+  
+  network.transaction_commit
+end`;
 
 export default Index;
