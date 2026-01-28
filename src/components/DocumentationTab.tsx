@@ -21,6 +21,8 @@ import {
   Layers
 } from "lucide-react";
 import ConversionFlowchart from "./ConversionFlowchart";
+import ConversionWizard from "./ConversionWizard";
+import TroubleshootingSection from "./TroubleshootingSection";
 
 const DocumentationTab = () => {
   return (
@@ -52,6 +54,9 @@ const DocumentationTab = () => {
           </div>
         </div>
       </Card>
+
+      {/* Interactive Wizard */}
+      <ConversionWizard />
 
       {/* Visual Flowchart */}
       <ConversionFlowchart />
@@ -284,6 +289,9 @@ const DocumentationTab = () => {
           </div>
         </div>
       </Card>
+
+      {/* Troubleshooting Section */}
+      <TroubleshootingSection />
 
       {/* Tested Models */}
       <Card className="p-6">
