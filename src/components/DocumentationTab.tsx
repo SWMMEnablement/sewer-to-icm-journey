@@ -20,6 +20,7 @@ import {
   Table,
   Layers
 } from "lucide-react";
+import ConversionFlowchart from "./ConversionFlowchart";
 
 const DocumentationTab = () => {
   return (
@@ -51,6 +52,9 @@ const DocumentationTab = () => {
           </div>
         </div>
       </Card>
+
+      {/* Visual Flowchart */}
+      <ConversionFlowchart />
 
       {/* Data Flow Section */}
       <Card className="p-6">
