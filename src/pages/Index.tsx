@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import OnboardingModal from "@/components/OnboardingModal";
 import DocumentationTab from "@/components/DocumentationTab";
+import ThemeToggle from "@/components/ThemeToggle";
+import DocumentationSearch from "@/components/DocumentationSearch";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
@@ -200,6 +202,12 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <OnboardingModal open={showOnboarding} onOpenChange={setShowOnboarding} />
       
+      {/* Header with Theme Toggle and Search */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
+        <DocumentationSearch />
+        <ThemeToggle />
+      </div>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-primary-glow">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
