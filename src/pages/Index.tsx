@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   FileInput, 
@@ -14,11 +15,25 @@ import {
   Zap,
   Shield,
   FileCode,
-  Code2
+  Code2,
+  BookOpen,
+  HelpCircle
 } from "lucide-react";
+import OnboardingModal from "@/components/OnboardingModal";
+import DocumentationTab from "@/components/DocumentationTab";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Show onboarding on first visit
+    const hasSeenOnboarding = localStorage.getItem('infosewer-onboarding-seen');
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+      localStorage.setItem('infosewer-onboarding-seen', 'true');
+    }
+  }, []);
 
   const steps = [
     {
@@ -183,6 +198,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <OnboardingModal open={showOnboarding} onOpenChange={setShowOnboarding} />
+      
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-primary-glow">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
@@ -196,10 +213,22 @@ const Index = () => {
               <br />
               <span className="text-white/90">Network Import Process</span>
             </h1>
-            <p className="mb-8 text-lg text-white/90 md:text-xl max-w-2xl mx-auto">
-              Fully automated tool for importing InfoSewer models into InfoWorks ICM. 
+            <p className="mb-4 text-lg text-white/90 md:text-xl max-w-2xl mx-auto">
+              Fully automated tool for converting InfoSewer models to InfoWorks ICM format. 
               Reduces import time from 30-45 minutes to under 5 minutes.
             </p>
+            <p className="mb-8 text-sm text-white/70 max-w-2xl mx-auto">
+              Note: This conversion process depends on external assumptions including Excel COM automation, 
+              standard .IEDB folder structure, and YAML field mappings.
+            </p>
+            <Button 
+              variant="secondary" 
+              onClick={() => setShowOnboarding(true)}
+              className="gap-2"
+            >
+              <HelpCircle className="w-4 h-4" />
+              View Onboarding Guide
+            </Button>
           </div>
         </div>
       </div>
@@ -311,8 +340,12 @@ const Index = () => {
           </div>
 
           <Card className="overflow-hidden">
-            <Tabs defaultValue="main" className="w-full">
+            <Tabs defaultValue="docs" className="w-full">
               <TabsList className="w-full justify-start rounded-none border-b bg-muted/50 p-0 h-auto flex-wrap">
+                <TabsTrigger value="docs" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Documentation
+                </TabsTrigger>
                 <TabsTrigger value="main" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
                   InfoSewer_Import_UI.rb
                 </TabsTrigger>
@@ -335,6 +368,10 @@ const Index = () => {
                   sql_cleanup.rb
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="docs" className="p-6 m-0">
+                <DocumentationTab />
+              </TabsContent>
 
               <TabsContent value="main" className="p-0 m-0">
                 <div className="max-h-[600px] overflow-auto">
