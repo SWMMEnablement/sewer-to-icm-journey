@@ -1,73 +1,73 @@
-# Welcome to your Lovable project
+# Sewer to ICM Journey
 
-## Project info
+> _README added by Robert Dickinson via Comet._
 
-**URL**: https://lovable.dev/projects/71e76117-6829-42a8-ab46-8b44796c1f2e
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white) ![shadcn/ui](https://img.shields.io/badge/shadcn--ui-000000?logo=shadcnui&logoColor=white)
 
-## How can I edit this code?
+## About
 
-There are several ways of editing your application.
+**Sewer to ICM Journey** is an interactive, client-side guide that walks engineers through the process of importing and converting sewer collection-system models into InfoWorks ICM. It pairs a step-by-step conversion wizard with a visual flowchart, searchable documentation, and troubleshooting guidance so users can follow the migration journey from a legacy sewer model to a working ICM network.
 
-**Use Lovable**
+It is part of the SWMMEnablement collection and is built on a modern Vite + React + TypeScript frontend styled with Tailwind CSS and shadcn/ui, including light/dark theming.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/71e76117-6829-42a8-ab46-8b44796c1f2e) and start prompting.
+## What's Inside
 
-Changes made via Lovable will be committed automatically to this repo.
+| Feature | Description |
+| --- | --- |
+| Conversion wizard | Step-by-step guided workflow for moving a sewer model into InfoWorks ICM. |
+| Conversion flowchart | Visual representation of the importer steps and decision points in the migration process. |
+| Documentation search | Searchable in-app documentation for reference during the conversion. |
+| Documentation tab | Organized reference material and import guidance. |
+| Onboarding modal | First-run introduction that orients new users to the workflow. |
+| Troubleshooting section | Common issues and resolutions encountered during import/conversion. |
+| Theme toggle | Light and dark mode support. |
 
-**Use your preferred IDE**
+## Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+| Layer | Technology |
+| --- | --- |
+| Language | TypeScript |
+| Framework | React 18 |
+| Build tool | Vite |
+| Styling | Tailwind CSS + shadcn/ui |
+| Runtime | Entirely client-side (no backend, no database) |
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Key Components
 
-Follow these steps:
+| Component | Role |
+| --- | --- |
+| `ConversionWizard` | Drives the guided, step-by-step conversion workflow. |
+| `ConversionFlowchart` | Renders the visual importer-steps flowchart. |
+| `DocumentationSearch` | Provides searchable in-app documentation. |
+| `DocumentationTab` | Organizes reference and import documentation. |
+| `OnboardingModal` | Introduces the workflow to first-time users. |
+| `TroubleshootingSection` | Surfaces common problems and fixes. |
+| `ThemeToggle` | Switches between light and dark themes. |
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Getting Started
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```bash
+# Clone the repository
+git clone https://github.com/SWMMEnablement/sewer-to-icm-journey.git
+cd sewer-to-icm-journey
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Then open the local URL printed by Vite (typically http://localhost:5173) in your browser.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+# Build for production
+npm run build
 
-**Use GitHub Codespaces**
+# Preview the production build
+npm run preview
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## License
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/71e76117-6829-42a8-ab46-8b44796c1f2e) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Released under the MIT License unless otherwise noted in this repository.
