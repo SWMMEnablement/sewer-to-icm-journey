@@ -351,10 +351,10 @@ const Index = () => {
                       </Badge>
                       
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-border">
+                        <div className="mt-4 pt-4 border-t border-border space-y-4">
                           <ul className="space-y-2">
                             {step.details.map((detail, detailIndex) => (
-                              <li 
+                              <li
                                 key={detailIndex}
                                 className="flex items-start gap-2 text-sm text-foreground"
                               >
@@ -363,8 +363,29 @@ const Index = () => {
                               </li>
                             ))}
                           </ul>
+                          <div className="grid md:grid-cols-3 gap-3 text-xs">
+                            <div className="p-3 rounded-md bg-muted/50">
+                              <div className="font-semibold text-foreground mb-1">Inputs</div>
+                              <ul className="space-y-1 text-muted-foreground">
+                                {step.inputs.map((x) => <li key={x}>• {x}</li>)}
+                              </ul>
+                            </div>
+                            <div className="p-3 rounded-md bg-muted/50">
+                              <div className="font-semibold text-foreground mb-1">Outputs</div>
+                              <ul className="space-y-1 text-muted-foreground">
+                                {step.outputs.map((x) => <li key={x}>• {x}</li>)}
+                              </ul>
+                            </div>
+                            <div className="p-3 rounded-md bg-warning/10">
+                              <div className="font-semibold text-foreground mb-1">Failure modes</div>
+                              <ul className="space-y-1 text-muted-foreground">
+                                {step.failures.map((x) => <li key={x}>• {x}</li>)}
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       )}
+
                     </div>
                   </div>
                 </Card>
