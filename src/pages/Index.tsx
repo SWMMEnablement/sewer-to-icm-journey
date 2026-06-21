@@ -23,6 +23,7 @@ import OnboardingModal from "@/components/OnboardingModal";
 import DocumentationTab from "@/components/DocumentationTab";
 import ThemeToggle from "@/components/ThemeToggle";
 import DocumentationSearch from "@/components/DocumentationSearch";
+import LimitationsPanel from "@/components/LimitationsPanel";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
