@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Terminal,
   ShieldAlert,
+  Code,
 } from "lucide-react";
 
 type Severity = "critical" | "warning";
@@ -29,6 +30,7 @@ interface Playbook {
   detect: string[];
   recover: { step: string; command?: string }[];
   prevent: string[];
+  yamlExample?: { label: string; snippet: string }[];
 }
 
 const playbooks: Playbook[] = [
@@ -56,6 +58,15 @@ const playbooks: Playbook[] = [
       "Avoid running the import while another macro or add-in has Excel busy.",
       "Disable Excel add-ins that show modal dialogs on startup.",
     ],
+    yamlExample: [
+      {
+        label: "config.rb — CSV cache path (check this if conversion stalls)",
+        snippet: `convert:
+  csv_cache_dir: "<%= iedb_path %>/_csv_cache"
+  excel_timeout: 120
+  retry_count: 3`,
+      },
+    ],
   },
   {
     id: "yaml-mapping",
@@ -81,6 +92,25 @@ const playbooks: Playbook[] = [
       "Validate YAML syntax with a linter before running (indent errors silently drop mappings).",
       "Document any custom InfoSewer fields the modeling team adds during export.",
     ],
+    yamlExample: [
+      {
+        label: "mappings/manhole.yaml — correct alias mapping",
+        snippet: `hw_node:
+  ground_level:
+    source: [GROUND_ELEV, G_ELEV, GrndElev, ELEV_MH]
+    default: 0.0
+  chamber_area:
+    source: [AREA, CHAMBER_AREA, MH_AREA]
+    default: 1.0`,
+      },
+      {
+        label: "mappings/manhole.yaml — broken mapping (missing alias)",
+        snippet: `hw_node:
+  ground_level:
+    source: [GROUND_ELEV]   # G_ELEV exists in DBF but is not listed
+    default: 0.0`,
+      },
+    ],
   },
   {
     id: "scenario-inheritance",
@@ -105,6 +135,33 @@ const playbooks: Playbook[] = [
       "Always import BASE alone first when onboarding a new model.",
       "Reject scenarios with circular PARENT chains during step 2 instead of letting them through.",
       "Standardize SET field naming so 'BASE' always means the BASE folder (avoid blanks).",
+    ],
+    yamlExample: [
+      {
+        label: "scenarios.yaml — correct parent and SET references",
+        snippet: `scenarios:
+  - name: BASE
+    parent: null
+    sets:
+      mh: BASE
+      pipe: BASE
+      pump: BASE
+  - name: PEAK
+    parent: BASE
+    sets:
+      mh: PEAK
+      pipe: PEAK
+      pump: BASE`,
+      },
+      {
+        label: "scenarios.yaml — broken inheritance (folder mismatch)",
+        snippet: `scenarios:
+  - name: PEAK
+    parent: BASE
+    sets:
+      mh: PEAKFLOW      # folder is actually named PEAK
+      pipe: PEAKFLOW    # no matching subfolder under IEDB`,
+      },
     ],
   },
 ];
@@ -211,6 +268,24 @@ const RecoveryPlaybooks = () => {
                       </ul>
                     </div>
                   </div>
+
+                  {pb.yamlExample && pb.yamlExample.length > 0 && (
+                    <div className="px-4 pb-5 pt-2 border-t border-border/60">
+                      <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                        <Code className="w-4 h-4 text-primary" /> Reference configuration
+                      </h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {pb.yamlExample.map((ex) => (
+                          <div key={ex.label}>
+                            <div className="text-xs font-medium text-muted-foreground mb-1.5">{ex.label}</div>
+                            <pre className="rounded-md bg-muted/60 border border-border p-3 overflow-x-auto text-xs leading-relaxed font-mono text-foreground">
+                              <code>{ex.snippet}</code>
+                            </pre>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CollapsibleContent>
               </Card>
             </Collapsible>
