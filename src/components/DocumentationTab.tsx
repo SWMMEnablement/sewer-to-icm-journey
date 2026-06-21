@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import ConversionFlowchart from "./ConversionFlowchart";
 import ConversionWizard from "./ConversionWizard";
-import TroubleshootingSection from "./TroubleshootingSection";
+
 
 const DocumentationTab = () => {
   return (
@@ -290,35 +290,9 @@ const DocumentationTab = () => {
         </div>
       </Card>
 
-      {/* Troubleshooting Section */}
-      <TroubleshootingSection />
-
-      {/* Tested Models */}
-      <Card className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <CheckCircle2 className="w-6 h-6 text-success" />
-          <h3 className="text-xl font-bold">Tested & Validated Models</h3>
-        </div>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-4 border rounded-lg text-center">
-            <h4 className="font-bold text-2xl text-primary">314</h4>
-            <p className="text-sm text-muted-foreground">Ch12Start Nodes</p>
-            <Badge variant="secondary" className="mt-2">Tutorial Model</Badge>
-          </div>
-          <div className="p-4 border rounded-lg text-center">
-            <h4 className="font-bold text-2xl text-primary">6,900</h4>
-            <p className="text-sm text-muted-foreground">Livermore Nodes</p>
-            <Badge variant="secondary" className="mt-2">32 Scenarios</Badge>
-          </div>
-          <div className="p-4 border rounded-lg text-center">
-            <h4 className="font-bold text-2xl text-primary">1,200</h4>
-            <p className="text-sm text-muted-foreground">Bastrop Nodes</p>
-            <Badge variant="secondary" className="mt-2">Production Model</Badge>
-          </div>
-        </div>
-      </Card>
     </div>
   );
 };
 
 export default DocumentationTab;
+

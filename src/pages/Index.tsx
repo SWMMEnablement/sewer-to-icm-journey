@@ -24,6 +24,9 @@ import DocumentationTab from "@/components/DocumentationTab";
 import ThemeToggle from "@/components/ThemeToggle";
 import DocumentationSearch from "@/components/DocumentationSearch";
 import LimitationsPanel from "@/components/LimitationsPanel";
+import ConversionWizard from "@/components/ConversionWizard";
+import RecoveryPlaybooks from "@/components/RecoveryPlaybooks";
+import TroubleshootingSection from "@/components/TroubleshootingSection";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
@@ -274,235 +277,193 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="container mx-auto px-4 -mt-8 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-          {stats.map((stat, index) => (
-            <Card 
-              key={index} 
-              className="p-6 text-center bg-card shadow-medium hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-            >
-              <stat.icon className="w-8 h-8 mx-auto mb-3 text-primary" />
-              <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Limitations + Manual Review + Sample */}
-      <div className="container mx-auto px-4 py-12">
+      {/* Main 4-tab navigation */}
+      <div className="container mx-auto px-4 -mt-8 relative z-10 pb-16">
         <div className="max-w-6xl mx-auto">
-          <LimitationsPanel />
-        </div>
-      </div>
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto bg-card shadow-medium p-1 sticky top-2 z-20">
+              <TabsTrigger value="overview" className="py-3">Overview</TabsTrigger>
+              <TabsTrigger value="process" className="py-3">Process Steps</TabsTrigger>
+              <TabsTrigger value="technical" className="py-3">Technical Details</TabsTrigger>
+              <TabsTrigger value="validation" className="py-3">Validation & Troubleshooting</TabsTrigger>
+            </TabsList>
 
+            {/* OVERVIEW */}
+            <TabsContent value="overview" className="mt-8 space-y-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {stats.map((stat, index) => (
+                  <Card
+                    key={index}
+                    className="p-6 text-center bg-card shadow-medium hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                  >
+                    <stat.icon className="w-8 h-8 mx-auto mb-3 text-primary" />
+                    <div className="text-xl font-bold text-foreground mb-1">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  </Card>
+                ))}
+              </div>
+              <LimitationsPanel />
+            </TabsContent>
 
+            {/* PROCESS STEPS */}
+            <TabsContent value="process" className="mt-8 space-y-8">
+              <ConversionWizard />
+              <div>
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-foreground mb-2">Import Process Steps</h2>
+                  <p className="text-muted-foreground">Click any step to see inputs, outputs, and failure modes</p>
+                </div>
+                <div className="space-y-4">
+                  {steps.map((step, index) => {
+                    const isExpanded = expandedStep === index;
+                    const StepIcon = step.icon;
 
-      {/* Import Steps */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Import Process Steps
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Click any step to see detailed information
-            </p>
-          </div>
+                    return (
+                      <Card
+                        key={index}
+                        className="overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer"
+                        onClick={() => setExpandedStep(isExpanded ? null : index)}
+                      >
+                        <div className="flex items-start gap-4 p-6">
+                          <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${step.color} flex items-center justify-center text-white font-bold text-lg shadow-soft`}>
+                            {step.number}
+                          </div>
 
-          <div className="space-y-4">
-            {steps.map((step, index) => {
-              const isExpanded = expandedStep === index;
-              const StepIcon = step.icon;
-              
-              return (
-                <Card 
-                  key={index}
-                  className="overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer"
-                  onClick={() => setExpandedStep(isExpanded ? null : index)}
-                >
-                  <div className="flex items-start gap-4 p-6">
-                    <div className={`flex-shrink-0 w-12 h-12 rounded-xl ${step.color} flex items-center justify-center text-white font-bold text-lg shadow-soft`}>
-                      {step.number}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4 mb-2">
-                        <div className="flex items-center gap-3">
-                          <StepIcon className="w-5 h-5 text-primary flex-shrink-0" />
-                          <h3 className="text-xl font-semibold text-foreground">
-                            {step.title}
-                          </h3>
-                        </div>
-                        <ChevronDown 
-                          className={`w-5 h-5 text-muted-foreground transition-transform duration-300 flex-shrink-0 ${
-                            isExpanded ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </div>
-                      
-                      <p className="text-muted-foreground mb-2">
-                        {step.description}
-                      </p>
-                      
-                      <Badge variant="secondary" className="text-xs">
-                        {step.file}
-                      </Badge>
-                      
-                      {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-border space-y-4">
-                          <ul className="space-y-2">
-                            {step.details.map((detail, detailIndex) => (
-                              <li
-                                key={detailIndex}
-                                className="flex items-start gap-2 text-sm text-foreground"
-                              >
-                                <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
-                                <span>{detail}</span>
-                              </li>
-                            ))}
-                          </ul>
-                          <div className="grid md:grid-cols-3 gap-3 text-xs">
-                            <div className="p-3 rounded-md bg-muted/50">
-                              <div className="font-semibold text-foreground mb-1">Inputs</div>
-                              <ul className="space-y-1 text-muted-foreground">
-                                {step.inputs.map((x) => <li key={x}>• {x}</li>)}
-                              </ul>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-4 mb-2">
+                              <div className="flex items-center gap-3">
+                                <StepIcon className="w-5 h-5 text-primary flex-shrink-0" />
+                                <h3 className="text-xl font-semibold text-foreground">
+                                  {step.title}
+                                </h3>
+                              </div>
+                              <ChevronDown
+                                className={`w-5 h-5 text-muted-foreground transition-transform duration-300 flex-shrink-0 ${
+                                  isExpanded ? 'rotate-180' : ''
+                                }`}
+                              />
                             </div>
-                            <div className="p-3 rounded-md bg-muted/50">
-                              <div className="font-semibold text-foreground mb-1">Outputs</div>
-                              <ul className="space-y-1 text-muted-foreground">
-                                {step.outputs.map((x) => <li key={x}>• {x}</li>)}
-                              </ul>
-                            </div>
-                            <div className="p-3 rounded-md bg-warning/10">
-                              <div className="font-semibold text-foreground mb-1">Failure modes</div>
-                              <ul className="space-y-1 text-muted-foreground">
-                                {step.failures.map((x) => <li key={x}>• {x}</li>)}
-                              </ul>
-                            </div>
+
+                            <p className="text-muted-foreground mb-2">{step.description}</p>
+
+                            <Badge variant="secondary" className="text-xs">{step.file}</Badge>
+
+                            {isExpanded && (
+                              <div className="mt-4 pt-4 border-t border-border space-y-4">
+                                <ul className="space-y-2">
+                                  {step.details.map((detail, detailIndex) => (
+                                    <li
+                                      key={detailIndex}
+                                      className="flex items-start gap-2 text-sm text-foreground"
+                                    >
+                                      <CheckCircle2 className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                                      <span>{detail}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                                <div className="grid md:grid-cols-3 gap-3 text-xs">
+                                  <div className="p-3 rounded-md bg-muted/50">
+                                    <div className="font-semibold text-foreground mb-1">Inputs</div>
+                                    <ul className="space-y-1 text-muted-foreground">
+                                      {step.inputs.map((x) => <li key={x}>• {x}</li>)}
+                                    </ul>
+                                  </div>
+                                  <div className="p-3 rounded-md bg-muted/50">
+                                    <div className="font-semibold text-foreground mb-1">Outputs</div>
+                                    <ul className="space-y-1 text-muted-foreground">
+                                      {step.outputs.map((x) => <li key={x}>• {x}</li>)}
+                                    </ul>
+                                  </div>
+                                  <div className="p-3 rounded-md bg-warning/10">
+                                    <div className="font-semibold text-foreground mb-1">Failure modes</div>
+                                    <ul className="space-y-1 text-muted-foreground">
+                                      {step.failures.map((x) => <li key={x}>• {x}</li>)}
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      )}
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            </TabsContent>
 
-                    </div>
+            {/* TECHNICAL DETAILS */}
+            <TabsContent value="technical" className="mt-8 space-y-8">
+              <DocumentationTab />
+
+              <Card className="overflow-hidden">
+                <div className="p-6 border-b bg-muted/30">
+                  <div className="flex items-center gap-3">
+                    <Code2 className="w-6 h-6 text-primary" />
+                    <h3 className="text-xl font-bold">Ruby Source Code</h3>
                   </div>
-                </Card>
-              );
-            })}
-          </div>
+                </div>
+                <Tabs defaultValue="main" className="w-full">
+                  <TabsList className="w-full justify-start rounded-none border-b bg-muted/50 p-0 h-auto flex-wrap">
+                    <TabsTrigger value="main" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">InfoSewer_Import_UI.rb</TabsTrigger>
+                    <TabsTrigger value="prompts" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">prompts.rb</TabsTrigger>
+                    <TabsTrigger value="data" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">data.rb</TabsTrigger>
+                    <TabsTrigger value="geo" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">geo.rb</TabsTrigger>
+                    <TabsTrigger value="scenario" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">scenario_import.rb</TabsTrigger>
+                    <TabsTrigger value="selection" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">selection_sets.rb</TabsTrigger>
+                    <TabsTrigger value="cleanup" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">sql_cleanup.rb</TabsTrigger>
+                  </TabsList>
+                  {[
+                    ["main", mainCode],
+                    ["prompts", promptsCode],
+                    ["data", dataCode],
+                    ["geo", geoCode],
+                    ["scenario", scenarioCode],
+                    ["selection", selectionCode],
+                    ["cleanup", cleanupCode],
+                  ].map(([k, code]) => (
+                    <TabsContent key={k} value={k} className="p-0 m-0">
+                      <div className="max-h-[600px] overflow-auto">
+                        <pre className="p-6 text-sm bg-card"><code>{code}</code></pre>
+                      </div>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              </Card>
+            </TabsContent>
+
+            {/* VALIDATION & TROUBLESHOOTING */}
+            <TabsContent value="validation" className="mt-8 space-y-8">
+              <RecoveryPlaybooks />
+              <TroubleshootingSection />
+              <Card className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <CheckCircle2 className="w-6 h-6 text-success" />
+                  <h3 className="text-xl font-bold">Tested on tutorial and production models</h3>
+                </div>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="p-4 border rounded-lg text-center">
+                    <h4 className="font-bold text-2xl text-primary">314</h4>
+                    <p className="text-sm text-muted-foreground">Ch12Start nodes</p>
+                    <Badge variant="secondary" className="mt-2">Tutorial model</Badge>
+                  </div>
+                  <div className="p-4 border rounded-lg text-center">
+                    <h4 className="font-bold text-2xl text-primary">6,900</h4>
+                    <p className="text-sm text-muted-foreground">Livermore nodes</p>
+                    <Badge variant="secondary" className="mt-2">32 scenarios</Badge>
+                  </div>
+                  <div className="p-4 border rounded-lg text-center">
+                    <h4 className="font-bold text-2xl text-primary">1,200</h4>
+                    <p className="text-sm text-muted-foreground">Bastrop nodes</p>
+                    <Badge variant="secondary" className="mt-2">Production model</Badge>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
-      {/* Source Code Section */}
-      <div className="container mx-auto px-4 py-16 bg-muted/30">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Code2 className="w-8 h-8 text-primary" />
-              <h2 className="text-3xl font-bold text-foreground">
-                Ruby Source Code
-              </h2>
-            </div>
-            <p className="text-muted-foreground text-lg">
-              Complete source code for the import tool
-            </p>
-          </div>
-
-          <Card className="overflow-hidden">
-            <Tabs defaultValue="docs" className="w-full">
-              <TabsList className="w-full justify-start rounded-none border-b bg-muted/50 p-0 h-auto flex-wrap">
-                <TabsTrigger value="docs" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Documentation
-                </TabsTrigger>
-                <TabsTrigger value="main" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  InfoSewer_Import_UI.rb
-                </TabsTrigger>
-                <TabsTrigger value="prompts" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  prompts.rb
-                </TabsTrigger>
-                <TabsTrigger value="data" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  data.rb
-                </TabsTrigger>
-                <TabsTrigger value="geo" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  geo.rb
-                </TabsTrigger>
-                <TabsTrigger value="scenario" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  scenario_import.rb
-                </TabsTrigger>
-                <TabsTrigger value="selection" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  selection_sets.rb
-                </TabsTrigger>
-                <TabsTrigger value="cleanup" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                  sql_cleanup.rb
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="docs" className="p-6 m-0">
-                <DocumentationTab />
-              </TabsContent>
-
-              <TabsContent value="main" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{mainCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="prompts" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{promptsCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="data" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{dataCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="geo" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{geoCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="scenario" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{scenarioCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="selection" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{selectionCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="cleanup" className="p-0 m-0">
-                <div className="max-h-[600px] overflow-auto">
-                  <pre className="p-6 text-sm bg-card">
-                    <code>{cleanupCode}</code>
-                  </pre>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </Card>
-        </div>
-      </div>
 
       {/* Footer */}
       <div className="border-t border-border bg-background">
