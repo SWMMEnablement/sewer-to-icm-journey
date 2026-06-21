@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Terminal,
   ShieldAlert,
+  Code,
 } from "lucide-react";
 
 type Severity = "critical" | "warning";
