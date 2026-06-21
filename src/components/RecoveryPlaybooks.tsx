@@ -268,6 +268,24 @@ const RecoveryPlaybooks = () => {
                       </ul>
                     </div>
                   </div>
+
+                  {pb.yamlExample && pb.yamlExample.length > 0 && (
+                    <div className="px-4 pb-5 pt-2 border-t border-border/60">
+                      <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                        <Code className="w-4 h-4 text-primary" /> Reference configuration
+                      </h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {pb.yamlExample.map((ex) => (
+                          <div key={ex.label}>
+                            <div className="text-xs font-medium text-muted-foreground mb-1.5">{ex.label}</div>
+                            <pre className="rounded-md bg-muted/60 border border-border p-3 overflow-x-auto text-xs leading-relaxed font-mono text-foreground">
+                              <code>{ex.snippet}</code>
+                            </pre>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CollapsibleContent>
               </Card>
             </Collapsible>
