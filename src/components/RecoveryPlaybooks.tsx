@@ -136,6 +136,33 @@ const playbooks: Playbook[] = [
       "Reject scenarios with circular PARENT chains during step 2 instead of letting them through.",
       "Standardize SET field naming so 'BASE' always means the BASE folder (avoid blanks).",
     ],
+    yamlExample: [
+      {
+        label: "scenarios.yaml — correct parent and SET references",
+        snippet: `scenarios:
+  - name: BASE
+    parent: null
+    sets:
+      mh: BASE
+      pipe: BASE
+      pump: BASE
+  - name: PEAK
+    parent: BASE
+    sets:
+      mh: PEAK
+      pipe: PEAK
+      pump: BASE`,
+      },
+      {
+        label: "scenarios.yaml — broken inheritance (folder mismatch)",
+        snippet: `scenarios:
+  - name: PEAK
+    parent: BASE
+    sets:
+      mh: PEAKFLOW      # folder is actually named PEAK
+      pipe: PEAKFLOW    # no matching subfolder under IEDB`,
+      },
+    ],
   },
 ];
 
