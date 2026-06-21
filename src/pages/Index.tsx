@@ -24,6 +24,9 @@ import DocumentationTab from "@/components/DocumentationTab";
 import ThemeToggle from "@/components/ThemeToggle";
 import DocumentationSearch from "@/components/DocumentationSearch";
 import LimitationsPanel from "@/components/LimitationsPanel";
+import ConversionWizard from "@/components/ConversionWizard";
+import RecoveryPlaybooks from "@/components/RecoveryPlaybooks";
+import TroubleshootingSection from "@/components/TroubleshootingSection";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
