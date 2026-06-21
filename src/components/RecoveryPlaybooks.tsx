@@ -92,6 +92,25 @@ const playbooks: Playbook[] = [
       "Validate YAML syntax with a linter before running (indent errors silently drop mappings).",
       "Document any custom InfoSewer fields the modeling team adds during export.",
     ],
+    yamlExample: [
+      {
+        label: "mappings/manhole.yaml — correct alias mapping",
+        snippet: `hw_node:
+  ground_level:
+    source: [GROUND_ELEV, G_ELEV, GrndElev, ELEV_MH]
+    default: 0.0
+  chamber_area:
+    source: [AREA, CHAMBER_AREA, MH_AREA]
+    default: 1.0`,
+      },
+      {
+        label: "mappings/manhole.yaml — broken mapping (missing alias)",
+        snippet: `hw_node:
+  ground_level:
+    source: [GROUND_ELEV]   # G_ELEV exists in DBF but is not listed
+    default: 0.0`,
+      },
+    ],
   },
   {
     id: "scenario-inheritance",
