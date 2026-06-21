@@ -290,6 +290,15 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Limitations + Manual Review + Sample */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          <LimitationsPanel />
+        </div>
+      </div>
+
+
+
       {/* Import Steps */}
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-5xl mx-auto">
