@@ -58,6 +58,15 @@ const playbooks: Playbook[] = [
       "Avoid running the import while another macro or add-in has Excel busy.",
       "Disable Excel add-ins that show modal dialogs on startup.",
     ],
+    yamlExample: [
+      {
+        label: "config.rb — CSV cache path (check this if conversion stalls)",
+        snippet: `convert:
+  csv_cache_dir: "<%= iedb_path %>/_csv_cache"
+  excel_timeout: 120
+  retry_count: 3`,
+      },
+    ],
   },
   {
     id: "yaml-mapping",
