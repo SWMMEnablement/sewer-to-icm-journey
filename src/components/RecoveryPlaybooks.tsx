@@ -29,6 +29,7 @@ interface Playbook {
   detect: string[];
   recover: { step: string; command?: string }[];
   prevent: string[];
+  yamlExample?: { label: string; snippet: string }[];
 }
 
 const playbooks: Playbook[] = [
