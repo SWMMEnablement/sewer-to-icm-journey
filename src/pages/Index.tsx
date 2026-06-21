@@ -509,7 +509,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-5xl mx-auto text-center text-sm text-muted-foreground">
             <p className="mb-2">
-              InfoSewer to InfoWorks ICM Import Tool • Version 2.1 • Tested & Production Ready
+              InfoSewer to InfoWorks ICM Import Tool • Version 2.1 • Tested on tutorial and production models
             </p>
             <p>
               Tested on Ch12Start (314 nodes), Livermore (6.9k nodes, 32 scenarios), Bastrop (1.2k nodes)
