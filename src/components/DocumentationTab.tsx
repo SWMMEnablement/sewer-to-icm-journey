@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import ConversionFlowchart from "./ConversionFlowchart";
 import ConversionWizard from "./ConversionWizard";
-import TroubleshootingSection from "./TroubleshootingSection";
+
 
 const DocumentationTab = () => {
   return (
