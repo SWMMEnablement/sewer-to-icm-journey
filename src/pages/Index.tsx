@@ -254,13 +254,14 @@ const Index = () => {
               <span className="text-white/90">Network Import Process</span>
             </h1>
             <p className="mb-4 text-lg text-white/90 md:text-xl max-w-2xl mx-auto">
-              Fully automated tool for converting InfoSewer models to InfoWorks ICM format. 
-              Reduces import time from 30-45 minutes to under 5 minutes.
+              A Ruby automation that converts InfoSewer .IEDB models into InfoWorks ICM,
+              typically reducing a 30–45 minute manual import to under 5 minutes.
             </p>
             <p className="mb-8 text-sm text-white/70 max-w-2xl mx-auto">
-              Note: This conversion process depends on external assumptions including Excel COM automation, 
-              standard .IEDB folder structure, and YAML field mappings.
+              Preserves mapped geometry, attributes, scenarios, and selection sets under supported
+              YAML field mappings. Requires Windows, Excel (COM) and ICM 2024.x or later.
             </p>
+
             <Button 
               variant="secondary" 
               onClick={() => setShowOnboarding(true)}
