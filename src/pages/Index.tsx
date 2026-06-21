@@ -23,6 +23,7 @@ import OnboardingModal from "@/components/OnboardingModal";
 import DocumentationTab from "@/components/DocumentationTab";
 import ThemeToggle from "@/components/ThemeToggle";
 import DocumentationSearch from "@/components/DocumentationSearch";
+import LimitationsPanel from "@/components/LimitationsPanel";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
@@ -49,6 +50,9 @@ const Index = () => {
         "Option to delete/preserve existing CSVs",
         "Validates all paths exist and are accessible"
       ],
+      inputs: ["IEDB folder path", "YAML field mapping files", "Previous config (optional)"],
+      outputs: ["Validated config object passed to downstream steps"],
+      failures: ["IEDB path not found", "YAML mapping file missing or malformed"],
       file: "prompts.rb",
       color: "bg-primary"
     },
@@ -63,6 +67,9 @@ const Index = () => {
         "User selects additional scenarios to import",
         "Builds parent-child scenario relationships"
       ],
+      inputs: ["SCENARIO.DBF", "User selection dialog"],
+      outputs: ["Ordered list of scenarios with parent links"],
+      failures: ["Missing BASE scenario", "Circular parent references"],
       file: "scenario_import.rb",
       color: "bg-primary"
     },
@@ -78,6 +85,9 @@ const Index = () => {
         "Caches CSVs for faster subsequent imports (12-15 min → <1 min)",
         "Converts 20+ files including MANHOLE, PIPE, PUMP, WWELL, etc."
       ],
+      inputs: ["*.DBF files under IEDB", "Excel (COM)"],
+      outputs: ["UTF-8 CSV files mirrored under csv cache folder"],
+      failures: ["Excel not installed / COM blocked", "Locked DBF files", "Non-Windows host"],
       file: "data.rb",
       color: "bg-accent"
     },
@@ -93,6 +103,9 @@ const Index = () => {
         "Identifies node types: Manhole, Outfall, WetWell",
         "Identifies link types: Pipe, Forcemain, Pump"
       ],
+      inputs: ["NODE.CSV", "LINK.CSV", "VERTEX.CSV", "MANHOLE.CSV", "WWELL.CSV"],
+      outputs: ["hw_nodes and hw_conduits with geometry in ICM"],
+      failures: ["Mixed coordinate systems", "Orphan link endpoints", "Duplicate node IDs"],
       file: "geo.rb",
       color: "bg-accent"
     },
@@ -109,6 +122,9 @@ const Index = () => {
         "MHHYD.DBF → Hydraulic loads and patterns",
         "Uses YAML field mappings for flexible attribute assignment"
       ],
+      inputs: ["MANHOLE/PIPE/PUMP/WWELL/MHHYD CSVs", "YAML mappings"],
+      outputs: ["Populated attribute fields on BASE network objects"],
+      failures: ["Field name mismatch vs YAML", "Unit mismatch (ft vs m)"],
       file: "InfoSewer_Import_UI.rb",
       color: "bg-success"
     },
@@ -124,6 +140,9 @@ const Index = () => {
         "Sets to 100% connectivity",
         "Configured as 'sanitary' system type"
       ],
+      inputs: ["Imported hw_node list (Manhole type)"],
+      outputs: ["One hw_subcatchment per manhole (area = 0.10)"],
+      failures: ["Manholes missing after geometry step", "Area must be re-evaluated manually"],
       file: "sql_cleanup.rb",
       color: "bg-success"
     },
@@ -141,6 +160,9 @@ const Index = () => {
         "Sets forcemain downstream nodes to 'Break' type",
         "Calculates wetwell surface areas"
       ],
+      inputs: ["BASE network after data import"],
+      outputs: ["Cleaned network: outfalls, pumps, breaks, valid lengths"],
+      failures: ["SQL transaction rollback on constraint violation", "Pump curve missing for converted link"],
       file: "sql_cleanup.rb",
       color: "bg-success"
     },
@@ -155,6 +177,9 @@ const Index = () => {
         "Configures scenario inheritance chains",
         "Sets up scenario-specific data folders"
       ],
+      inputs: ["Scenario list from step 2"],
+      outputs: ["ICM scenario tree mirroring InfoSewer hierarchy"],
+      failures: ["Duplicate scenario name", "Parent not yet created"],
       file: "scenario_import.rb",
       color: "bg-primary"
     },
@@ -171,6 +196,9 @@ const Index = () => {
         "Resolves data inheritance from parent scenarios",
         "Uses SET fields (MH_SET, PIPE_SET, etc.) for data location"
       ],
+      inputs: ["Per-scenario MHHYD/PIPEHYD/PUMPHYD/WWELLHYD CSVs", "SET fields"],
+      outputs: ["Scenario-specific overrides applied in ICM"],
+      failures: ["SET points to missing parent folder", "Inheritance chain depth > supported"],
       file: "scenario_import.rb",
       color: "bg-primary"
     },
@@ -186,17 +214,21 @@ const Index = () => {
         "Creates ICM selection lists with descriptions",
         "Maps InfoSewer IDs to ICM compound IDs"
       ],
+      inputs: ["SELSET.CSV", "SS/*/ANODE.CSV", "SS/*/ALINK.CSV"],
+      outputs: ["ICM selection lists with mapped object IDs"],
+      failures: ["Selection references missing object IDs", "Empty selection sets skipped"],
       file: "selection_sets.rb",
       color: "bg-accent"
     }
   ];
 
   const stats = [
-    { label: "Import Time (First)", value: "<5 min", icon: Clock },
+    { label: "Import Time (First Run)", value: "<5 min", icon: Clock },
     { label: "Import Time (Cached)", value: "<1 min", icon: Zap },
-    { label: "Data Preservation", value: "100%", icon: Shield },
-    { label: "Validation Status", value: "Clean", icon: CheckCircle2 }
+    { label: "Tested Models", value: "314 / 1.2k / 6.9k nodes", icon: CheckCircle2 },
+    { label: "Compatibility", value: "ICM 2024.x · Win · Excel", icon: Shield }
   ];
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -222,13 +254,14 @@ const Index = () => {
               <span className="text-white/90">Network Import Process</span>
             </h1>
             <p className="mb-4 text-lg text-white/90 md:text-xl max-w-2xl mx-auto">
-              Fully automated tool for converting InfoSewer models to InfoWorks ICM format. 
-              Reduces import time from 30-45 minutes to under 5 minutes.
+              A Ruby automation that converts InfoSewer .IEDB models into InfoWorks ICM,
+              typically reducing a 30–45 minute manual import to under 5 minutes.
             </p>
             <p className="mb-8 text-sm text-white/70 max-w-2xl mx-auto">
-              Note: This conversion process depends on external assumptions including Excel COM automation, 
-              standard .IEDB folder structure, and YAML field mappings.
+              Preserves mapped geometry, attributes, scenarios, and selection sets under supported
+              YAML field mappings. Requires Windows, Excel (COM) and ICM 2024.x or later.
             </p>
+
             <Button 
               variant="secondary" 
               onClick={() => setShowOnboarding(true)}
@@ -256,6 +289,15 @@ const Index = () => {
           ))}
         </div>
       </div>
+
+      {/* Limitations + Manual Review + Sample */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          <LimitationsPanel />
+        </div>
+      </div>
+
+
 
       {/* Import Steps */}
       <div className="container mx-auto px-4 py-16">
@@ -309,10 +351,10 @@ const Index = () => {
                       </Badge>
                       
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-border">
+                        <div className="mt-4 pt-4 border-t border-border space-y-4">
                           <ul className="space-y-2">
                             {step.details.map((detail, detailIndex) => (
-                              <li 
+                              <li
                                 key={detailIndex}
                                 className="flex items-start gap-2 text-sm text-foreground"
                               >
@@ -321,8 +363,29 @@ const Index = () => {
                               </li>
                             ))}
                           </ul>
+                          <div className="grid md:grid-cols-3 gap-3 text-xs">
+                            <div className="p-3 rounded-md bg-muted/50">
+                              <div className="font-semibold text-foreground mb-1">Inputs</div>
+                              <ul className="space-y-1 text-muted-foreground">
+                                {step.inputs.map((x) => <li key={x}>• {x}</li>)}
+                              </ul>
+                            </div>
+                            <div className="p-3 rounded-md bg-muted/50">
+                              <div className="font-semibold text-foreground mb-1">Outputs</div>
+                              <ul className="space-y-1 text-muted-foreground">
+                                {step.outputs.map((x) => <li key={x}>• {x}</li>)}
+                              </ul>
+                            </div>
+                            <div className="p-3 rounded-md bg-warning/10">
+                              <div className="font-semibold text-foreground mb-1">Failure modes</div>
+                              <ul className="space-y-1 text-muted-foreground">
+                                {step.failures.map((x) => <li key={x}>• {x}</li>)}
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       )}
+
                     </div>
                   </div>
                 </Card>
@@ -446,7 +509,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-5xl mx-auto text-center text-sm text-muted-foreground">
             <p className="mb-2">
-              InfoSewer to InfoWorks ICM Import Tool • Version 2.1 • Tested & Production Ready
+              InfoSewer to InfoWorks ICM Import Tool • Version 2.1 • Tested on tutorial and production models
             </p>
             <p>
               Tested on Ch12Start (314 nodes), Livermore (6.9k nodes, 32 scenarios), Bastrop (1.2k nodes)
