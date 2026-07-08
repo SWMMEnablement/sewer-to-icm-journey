@@ -135,6 +135,7 @@ const playbooks: Playbook[] = [
     yamlExample: [
       {
         label: "mappings/manhole.yaml — correct alias mapping",
+        variant: "correct",
         snippet: `hw_node:
   ground_level:
     source: [GROUND_ELEV, G_ELEV, GrndElev, ELEV_MH]
@@ -145,6 +146,7 @@ const playbooks: Playbook[] = [
       },
       {
         label: "mappings/manhole.yaml — broken mapping (missing alias)",
+        variant: "broken",
         snippet: `hw_node:
   ground_level:
     source: [GROUND_ELEV]   # G_ELEV exists in DBF but is not listed
