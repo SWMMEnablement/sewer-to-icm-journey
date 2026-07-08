@@ -439,7 +439,14 @@ const Index = () => {
 
             {/* VALIDATION & TROUBLESHOOTING */}
             <TabsContent value="validation" className="mt-8 space-y-8">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <p className="text-sm text-muted-foreground">
+                  Export everything below (plus your latest YAML validation results) as a Markdown report.
+                </p>
+                <ValidationReportButton yamlResults={yamlResults} />
+              </div>
               <RecoveryPlaybooks />
+              <YamlValidator onResultsChange={setYamlResults} />
               <TroubleshootingSection />
               <Card className="p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -464,6 +471,11 @@ const Index = () => {
                   </div>
                 </div>
               </Card>
+            </TabsContent>
+
+            {/* APP GUIDE */}
+            <TabsContent value="guide" className="mt-8">
+              <AppGuideViewer />
             </TabsContent>
           </Tabs>
         </div>
