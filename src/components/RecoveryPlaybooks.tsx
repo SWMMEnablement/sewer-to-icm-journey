@@ -181,13 +181,8 @@ const playbooks: Playbook[] = [
     yamlExample: [
       {
         label: "scenarios.yaml — correct parent and SET references",
+        variant: "correct",
         snippet: `scenarios:
-  - name: BASE
-    parent: null
-    sets:
-      mh: BASE
-      pipe: BASE
-      pump: BASE
   - name: PEAK
     parent: BASE
     sets:
@@ -197,6 +192,7 @@ const playbooks: Playbook[] = [
       },
       {
         label: "scenarios.yaml — broken inheritance (folder mismatch)",
+        variant: "broken",
         snippet: `scenarios:
   - name: PEAK
     parent: BASE
