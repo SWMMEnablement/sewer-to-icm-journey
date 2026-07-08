@@ -21,6 +21,14 @@ import {
 
 type Severity = "critical" | "warning";
 
+type YamlVariant = "correct" | "broken";
+
+interface YamlExample {
+  label: string;
+  snippet: string;
+  variant?: YamlVariant;
+}
+
 interface Playbook {
   id: string;
   title: string;
@@ -30,8 +38,40 @@ interface Playbook {
   detect: string[];
   recover: { step: string; command?: string }[];
   prevent: string[];
-  yamlExample?: { label: string; snippet: string }[];
+  yamlExample?: YamlExample[];
 }
+
+type DiffStatus = "same" | "added" | "removed";
+
+// Line-level diff: compares against the paired snippet.
+// - In the "correct" snippet, lines missing from "broken" render as `added` (green).
+// - In the "broken" snippet, lines missing from "correct" render as `removed` (red).
+const diffLines = (
+  snippet: string,
+  other: string | undefined,
+  variant: YamlVariant | undefined,
+): { text: string; status: DiffStatus }[] => {
+  const lines = snippet.split("\n");
+  if (!other || !variant) return lines.map((text) => ({ text, status: "same" }));
+  const otherSet = new Set(other.split("\n").map((l) => l.trimEnd()));
+  const changed: DiffStatus = variant === "broken" ? "removed" : "added";
+  return lines.map((text) => ({
+    text,
+    status: otherSet.has(text.trimEnd()) ? "same" : text.trim() === "" ? "same" : changed,
+  }));
+};
+
+const diffLineClass: Record<DiffStatus, string> = {
+  same: "text-foreground",
+  added: "bg-success/15 text-foreground border-l-2 border-success pl-2 -ml-2",
+  removed: "bg-destructive/15 text-foreground border-l-2 border-destructive pl-2 -ml-2",
+};
+
+const diffMarker: Record<DiffStatus, string> = {
+  same: "  ",
+  added: "+ ",
+  removed: "- ",
+};
 
 const playbooks: Playbook[] = [
   {
