@@ -30,7 +30,7 @@ interface TroubleshootingItem {
   icon: React.ElementType;
 }
 
-const troubleshootingItems: TroubleshootingItem[] = [
+export const troubleshootingItems: TroubleshootingItem[] = [
   {
     id: "excel-com",
     error: "Excel COM Automation Failed",
