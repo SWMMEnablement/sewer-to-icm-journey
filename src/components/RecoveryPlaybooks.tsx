@@ -73,7 +73,7 @@ const diffMarker: Record<DiffStatus, string> = {
   removed: "- ",
 };
 
-const playbooks: Playbook[] = [
+export const playbooks: Playbook[] = [
   {
     id: "excel-com",
     title: "Excel COM automation failure",
