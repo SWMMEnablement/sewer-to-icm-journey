@@ -311,16 +311,51 @@ const RecoveryPlaybooks = () => {
                     <div className="px-4 pb-5 pt-2 border-t border-border/60">
                       <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
                         <Code className="w-4 h-4 text-primary" /> Reference configuration
+                        {pb.yamlExample.some((e) => e.variant) && (
+                          <span className="ml-auto flex items-center gap-3 text-xs font-normal text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <span className="inline-block w-3 h-3 rounded-sm bg-success/30 border border-success" />
+                              only in correct
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="inline-block w-3 h-3 rounded-sm bg-destructive/30 border border-destructive" />
+                              only in broken
+                            </span>
+                          </span>
+                        )}
                       </h4>
                       <div className="grid md:grid-cols-2 gap-4">
-                        {pb.yamlExample.map((ex) => (
-                          <div key={ex.label}>
-                            <div className="text-xs font-medium text-muted-foreground mb-1.5">{ex.label}</div>
-                            <pre className="rounded-md bg-muted/60 border border-border p-3 overflow-x-auto text-xs leading-relaxed font-mono text-foreground">
-                              <code>{ex.snippet}</code>
-                            </pre>
-                          </div>
-                        ))}
+                        {pb.yamlExample.map((ex, idx) => {
+                          const counterpart = ex.variant
+                            ? pb.yamlExample!.find(
+                                (o, j) => j !== idx && o.variant && o.variant !== ex.variant,
+                              )
+                            : undefined;
+                          const lines = diffLines(ex.snippet, counterpart?.snippet, ex.variant);
+                          return (
+                            <div key={ex.label}>
+                              <div className="text-xs font-medium text-muted-foreground mb-1.5 flex items-center gap-2">
+                                {ex.variant === "correct" && (
+                                  <Badge className="bg-success text-success-foreground text-[10px] px-1.5 py-0">correct</Badge>
+                                )}
+                                {ex.variant === "broken" && (
+                                  <Badge className="bg-destructive text-destructive-foreground text-[10px] px-1.5 py-0">broken</Badge>
+                                )}
+                                <span>{ex.label}</span>
+                              </div>
+                              <pre className="rounded-md bg-muted/60 border border-border p-3 overflow-x-auto text-xs leading-relaxed font-mono">
+                                <code>
+                                  {lines.map((l, i) => (
+                                    <div key={i} className={diffLineClass[l.status]}>
+                                      <span className="select-none text-muted-foreground/60">{diffMarker[l.status]}</span>
+                                      {l.text || "\u00A0"}
+                                    </div>
+                                  ))}
+                                </code>
+                              </pre>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
