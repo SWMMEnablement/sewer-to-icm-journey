@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { ValidationFinding } from "@/lib/validationReport";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,10 +28,13 @@ import LimitationsPanel from "@/components/LimitationsPanel";
 import ConversionWizard from "@/components/ConversionWizard";
 import RecoveryPlaybooks from "@/components/RecoveryPlaybooks";
 import TroubleshootingSection from "@/components/TroubleshootingSection";
+import YamlValidator, { ValidationReportButton } from "@/components/YamlValidator";
+import AppGuideViewer from "@/components/AppGuideViewer";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [yamlResults, setYamlResults] = useState<{ source: string; findings: ValidationFinding[] }[]>([]);
 
   useEffect(() => {
     // Show onboarding on first visit
@@ -281,11 +285,12 @@ const Index = () => {
       <div className="container mx-auto px-4 -mt-8 relative z-10 pb-16">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto bg-card shadow-medium p-1 sticky top-2 z-20">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto bg-card shadow-medium p-1 sticky top-2 z-20">
               <TabsTrigger value="overview" className="py-3">Overview</TabsTrigger>
               <TabsTrigger value="process" className="py-3">Process Steps</TabsTrigger>
               <TabsTrigger value="technical" className="py-3">Technical Details</TabsTrigger>
               <TabsTrigger value="validation" className="py-3">Validation & Troubleshooting</TabsTrigger>
+              <TabsTrigger value="guide" className="py-3">App Guide</TabsTrigger>
             </TabsList>
 
             {/* OVERVIEW */}
@@ -434,7 +439,14 @@ const Index = () => {
 
             {/* VALIDATION & TROUBLESHOOTING */}
             <TabsContent value="validation" className="mt-8 space-y-8">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <p className="text-sm text-muted-foreground">
+                  Export everything below (plus your latest YAML validation results) as a Markdown report.
+                </p>
+                <ValidationReportButton yamlResults={yamlResults} />
+              </div>
               <RecoveryPlaybooks />
+              <YamlValidator onResultsChange={setYamlResults} />
               <TroubleshootingSection />
               <Card className="p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -459,6 +471,11 @@ const Index = () => {
                   </div>
                 </div>
               </Card>
+            </TabsContent>
+
+            {/* APP GUIDE */}
+            <TabsContent value="guide" className="mt-8">
+              <AppGuideViewer />
             </TabsContent>
           </Tabs>
         </div>
