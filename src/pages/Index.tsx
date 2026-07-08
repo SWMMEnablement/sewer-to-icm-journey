@@ -285,11 +285,12 @@ const Index = () => {
       <div className="container mx-auto px-4 -mt-8 relative z-10 pb-16">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto bg-card shadow-medium p-1 sticky top-2 z-20">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto bg-card shadow-medium p-1 sticky top-2 z-20">
               <TabsTrigger value="overview" className="py-3">Overview</TabsTrigger>
               <TabsTrigger value="process" className="py-3">Process Steps</TabsTrigger>
               <TabsTrigger value="technical" className="py-3">Technical Details</TabsTrigger>
               <TabsTrigger value="validation" className="py-3">Validation & Troubleshooting</TabsTrigger>
+              <TabsTrigger value="guide" className="py-3">App Guide</TabsTrigger>
             </TabsList>
 
             {/* OVERVIEW */}
