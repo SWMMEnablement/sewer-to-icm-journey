@@ -28,10 +28,13 @@ import LimitationsPanel from "@/components/LimitationsPanel";
 import ConversionWizard from "@/components/ConversionWizard";
 import RecoveryPlaybooks from "@/components/RecoveryPlaybooks";
 import TroubleshootingSection from "@/components/TroubleshootingSection";
+import YamlValidator, { ValidationReportButton } from "@/components/YamlValidator";
+import AppGuideViewer from "@/components/AppGuideViewer";
 
 const Index = () => {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [yamlResults, setYamlResults] = useState<{ source: string; findings: ValidationFinding[] }[]>([]);
 
   useEffect(() => {
     // Show onboarding on first visit
