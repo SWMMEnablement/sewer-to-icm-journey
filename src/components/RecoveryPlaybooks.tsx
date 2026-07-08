@@ -21,6 +21,14 @@ import {
 
 type Severity = "critical" | "warning";
 
+type YamlVariant = "correct" | "broken";
+
+interface YamlExample {
+  label: string;
+  snippet: string;
+  variant?: YamlVariant;
+}
+
 interface Playbook {
   id: string;
   title: string;
@@ -30,8 +38,40 @@ interface Playbook {
   detect: string[];
   recover: { step: string; command?: string }[];
   prevent: string[];
-  yamlExample?: { label: string; snippet: string }[];
+  yamlExample?: YamlExample[];
 }
+
+type DiffStatus = "same" | "added" | "removed";
+
+// Line-level diff: compares against the paired snippet.
+// - In the "correct" snippet, lines missing from "broken" render as `added` (green).
+// - In the "broken" snippet, lines missing from "correct" render as `removed` (red).
+const diffLines = (
+  snippet: string,
+  other: string | undefined,
+  variant: YamlVariant | undefined,
+): { text: string; status: DiffStatus }[] => {
+  const lines = snippet.split("\n");
+  if (!other || !variant) return lines.map((text) => ({ text, status: "same" }));
+  const otherSet = new Set(other.split("\n").map((l) => l.trimEnd()));
+  const changed: DiffStatus = variant === "broken" ? "removed" : "added";
+  return lines.map((text) => ({
+    text,
+    status: otherSet.has(text.trimEnd()) ? "same" : text.trim() === "" ? "same" : changed,
+  }));
+};
+
+const diffLineClass: Record<DiffStatus, string> = {
+  same: "text-foreground",
+  added: "bg-success/15 text-foreground border-l-2 border-success pl-2 -ml-2",
+  removed: "bg-destructive/15 text-foreground border-l-2 border-destructive pl-2 -ml-2",
+};
+
+const diffMarker: Record<DiffStatus, string> = {
+  same: "  ",
+  added: "+ ",
+  removed: "- ",
+};
 
 const playbooks: Playbook[] = [
   {
@@ -95,6 +135,7 @@ const playbooks: Playbook[] = [
     yamlExample: [
       {
         label: "mappings/manhole.yaml — correct alias mapping",
+        variant: "correct",
         snippet: `hw_node:
   ground_level:
     source: [GROUND_ELEV, G_ELEV, GrndElev, ELEV_MH]
@@ -105,6 +146,7 @@ const playbooks: Playbook[] = [
       },
       {
         label: "mappings/manhole.yaml — broken mapping (missing alias)",
+        variant: "broken",
         snippet: `hw_node:
   ground_level:
     source: [GROUND_ELEV]   # G_ELEV exists in DBF but is not listed
@@ -139,13 +181,8 @@ const playbooks: Playbook[] = [
     yamlExample: [
       {
         label: "scenarios.yaml — correct parent and SET references",
+        variant: "correct",
         snippet: `scenarios:
-  - name: BASE
-    parent: null
-    sets:
-      mh: BASE
-      pipe: BASE
-      pump: BASE
   - name: PEAK
     parent: BASE
     sets:
@@ -155,6 +192,7 @@ const playbooks: Playbook[] = [
       },
       {
         label: "scenarios.yaml — broken inheritance (folder mismatch)",
+        variant: "broken",
         snippet: `scenarios:
   - name: PEAK
     parent: BASE
@@ -273,16 +311,51 @@ const RecoveryPlaybooks = () => {
                     <div className="px-4 pb-5 pt-2 border-t border-border/60">
                       <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
                         <Code className="w-4 h-4 text-primary" /> Reference configuration
+                        {pb.yamlExample.some((e) => e.variant) && (
+                          <span className="ml-auto flex items-center gap-3 text-xs font-normal text-muted-foreground">
+                            <span className="flex items-center gap-1">
+                              <span className="inline-block w-3 h-3 rounded-sm bg-success/30 border border-success" />
+                              only in correct
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <span className="inline-block w-3 h-3 rounded-sm bg-destructive/30 border border-destructive" />
+                              only in broken
+                            </span>
+                          </span>
+                        )}
                       </h4>
                       <div className="grid md:grid-cols-2 gap-4">
-                        {pb.yamlExample.map((ex) => (
-                          <div key={ex.label}>
-                            <div className="text-xs font-medium text-muted-foreground mb-1.5">{ex.label}</div>
-                            <pre className="rounded-md bg-muted/60 border border-border p-3 overflow-x-auto text-xs leading-relaxed font-mono text-foreground">
-                              <code>{ex.snippet}</code>
-                            </pre>
-                          </div>
-                        ))}
+                        {pb.yamlExample.map((ex, idx) => {
+                          const counterpart = ex.variant
+                            ? pb.yamlExample!.find(
+                                (o, j) => j !== idx && o.variant && o.variant !== ex.variant,
+                              )
+                            : undefined;
+                          const lines = diffLines(ex.snippet, counterpart?.snippet, ex.variant);
+                          return (
+                            <div key={ex.label}>
+                              <div className="text-xs font-medium text-muted-foreground mb-1.5 flex items-center gap-2">
+                                {ex.variant === "correct" && (
+                                  <Badge className="bg-success text-success-foreground text-[10px] px-1.5 py-0">correct</Badge>
+                                )}
+                                {ex.variant === "broken" && (
+                                  <Badge className="bg-destructive text-destructive-foreground text-[10px] px-1.5 py-0">broken</Badge>
+                                )}
+                                <span>{ex.label}</span>
+                              </div>
+                              <pre className="rounded-md bg-muted/60 border border-border p-3 overflow-x-auto text-xs leading-relaxed font-mono">
+                                <code>
+                                  {lines.map((l, i) => (
+                                    <div key={i} className={diffLineClass[l.status]}>
+                                      <span className="select-none text-muted-foreground/60">{diffMarker[l.status]}</span>
+                                      {l.text || "\u00A0"}
+                                    </div>
+                                  ))}
+                                </code>
+                              </pre>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
